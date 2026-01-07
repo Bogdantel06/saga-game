@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sagaidachny Game PRO - Fixed</title>
+    <title>Sagaidachny Game - V12 Autoclick Fix</title>
     <style>
         :root { --gold: #ffd700; --red: #ff4d4d; --bg: #0f0f0f; --blue: #00d4ff; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; user-select: none; overflow: hidden; }
@@ -15,94 +15,103 @@
         #hp-fill { height: 100%; background: linear-gradient(90deg, var(--red), #ff9900); width: 100%; transition: width 0.3s; }
         #boss-img { width: 250px; height: 250px; object-fit: contain; margin: 15px 0; transition: transform 0.1s; cursor: pointer; }
         .stats-panel { background: #1a1a1a; padding: 12px; border-radius: 20px; width: 95%; text-align: center; border: 1px solid #333; }
-        #shop-scroll { width: 100%; max-height: 65vh; overflow-y: auto; margin-bottom: 10px; padding-right: 5px; }
-        .shop-item { background: #1a1a1a; width: 100%; padding: 10px; margin: 5px 0; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; font-size: 14px; }
+        #shop-scroll { width: 100%; max-height: 60vh; overflow-y: auto; margin-bottom: 10px; }
+        .shop-item { background: #1a1a1a; width: 95%; padding: 10px; margin: 5px auto; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; font-size: 14px; }
         .buy-btn { background: #28a745; border: none; color: white; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .buy-btn:disabled { background: #555; cursor: not-allowed; }
-        .charity-text { font-size: 11px; color: #888; text-align: center; padding: 10px; line-height: 1.4; border-top: 1px solid #222; }
-        #transition-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:1000; justify-content:center; align-items:center; font-size:24px; color: var(--gold); }
-        .ref-box { background: #222; padding: 12px; border-radius: 8px; border: 1px dashed var(--gold); width: 100%; word-break: break-all; text-align: center; margin: 10px 0; cursor: pointer; font-size: 13px; }
+        #transition-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.98); z-index:1000; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
     </style>
 </head>
 <body>
 
 <div id="screen-main" class="screen active">
     <h1>SAGAIDACHNY GAME</h1>
-    <button class="menu-btn" id="m-start" onclick="showScreen('screen-game')">Старт</button>
-    <button class="menu-btn" id="m-shop" onclick="showScreen('screen-shop')">Магазин</button>
-    <button class="menu-btn" id="m-friends" onclick="showScreen('screen-friends')">Друзі</button>
-    <button class="menu-btn" id="m-lang" onclick="showScreen('screen-lang')">Мова</button>
-    <button class="menu-btn" id="m-exit" onclick="closeGame()">Вихід</button>
+    <button class="menu-btn" id="m-start" onclick="showScreen('screen-game')"></button>
+    <button class="menu-btn" id="m-shop" onclick="showScreen('screen-shop')"></button>
+    <button class="menu-btn" id="m-friends" onclick="showScreen('screen-friends')"></button>
+    <button class="menu-btn" id="m-lang" onclick="showScreen('screen-lang')"></button>
+    <button class="menu-btn" id="m-exit" onclick="closeGame()"></button>
 </div>
 
 <div id="screen-game" class="screen">
-    <div class="hp-bar"><div id="hp-fill"></div><div id="hp-text" style="position:absolute; width:100%; text-align:center; top:2px; font-weight:bold; color:white; text-shadow:1px 1px 2px black;"></div></div>
+    <div class="hp-bar"><div id="hp-fill"></div><div id="hp-text" style="position:absolute; width:100%; text-align:center; top:2px; font-weight:bold;"></div></div>
     <img id="boss-img" src="1.png" onclick="handleHit()">
     <div class="stats-panel">
         <div style="color:var(--gold); font-size:24px; font-weight:bold;">💰 <span id="coins">0</span></div>
-        <div id="ammo-text" style="font-size:15px;">⚡ Патрони: <span id="ammo">100</span> / <span id="max-ammo">100</span></div>
+        <div style="font-size:16px;">⚡ <span id="txt-ammo"></span>: <span id="ammo">100</span> / <span id="max-ammo">100</span></div>
         <div id="rank-display" style="color:var(--blue); font-weight:bold; font-size:14px; margin-top:5px;"></div>
     </div>
-    <button class="menu-btn btn-back" onclick="showScreen('screen-main')" style="margin-top:20px;">Назад</button>
+    <button class="menu-btn btn-back" onclick="showScreen('screen-main')" style="margin-top:20px;"></button>
 </div>
 
 <div id="screen-shop" class="screen">
-    <h2 id="s-title">Магазин</h2>
+    <h2 id="s-title"></h2>
     <div id="shop-scroll">
-        <h4 id="h-boosts">Покращення</h4><div id="list-boosts"></div>
-        <h4 id="h-auto">Автоклікер</h4><div id="list-auto"></div>
-        <h4 id="h-buy">Монети</h4><div id="list-buy"></div>
-        <h4 id="h-ranks">Звання</h4><div id="list-ranks"></div>
+        <h4 id="h-boosts"></h4><div id="list-boosts"></div>
+        <h4 id="h-auto"></h4><div id="list-auto"></div>
+        <h4 id="h-ranks"></h4><div id="list-ranks"></div>
+        <h4 id="h-buy"></h4><div id="list-buy"></div>
     </div>
-    <div class="charity-text" id="charity-msg"></div>
-    <button class="menu-btn btn-back" onclick="showScreen('screen-main')">Назад</button>
+    <button class="menu-btn btn-back" onclick="showScreen('screen-main')"></button>
 </div>
 
 <div id="screen-friends" class="screen">
-    <h2 id="f-title">Друзі</h2>
-    <div class="ref-box" id="ref-link" onclick="copyRef()"></div>
-    <button class="menu-btn btn-back" onclick="showScreen('screen-main')" style="margin-top:20px;">Назад</button>
+    <h2 id="f-title"></h2>
+    <div id="ref-link" style="background:#222; padding:10px; border-radius:8px; border:1px dashed var(--gold); margin:10px 0; font-size:13px; cursor:pointer;" onclick="copyRef()"></div>
+    <button class="menu-btn btn-back" onclick="showScreen('screen-main')"></button>
 </div>
 
 <div id="screen-lang" class="screen">
-    <h2 id="l-title">Мова</h2>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;" id="lang-grid">
-        <button class="menu-btn" style="width:130px" onclick="setLang('ua')">UA 🇺🇦</button>
-        <button class="menu-btn" style="width:130px" onclick="setLang('en')">EN 🇺🇸</button>
-        <button class="menu-btn" style="width:130px" onclick="setLang('pl')">PL 🇵🇱</button>
-        <button class="menu-btn" style="width:130px" onclick="setLang('de')">DE 🇩🇪</button>
-        <button class="menu-btn" style="width:130px" onclick="setLang('it')">IT 🇮🇹</button>
-        <button class="menu-btn" style="width:130px" onclick="setLang('es')">ES 🇪🇸</button>
-        <button class="menu-btn" style="width:130px" onclick="setLang('no')">NO 🇳🇴</button>
-        <button class="menu-btn" style="width:130px" onclick="setLang('kz')">KZ 🇰🇿</button>
-        <button class="menu-btn" style="width:130px" onclick="setLang('jp')">JP 🇯🇵</button>
+    <h2 id="l-title"></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+        <button class="menu-btn" style="width:135px" onclick="setLang('ua')">UA 🇺🇦</button>
+        <button class="menu-btn" style="width:135px" onclick="setLang('en')">EN 🇺🇸</button>
+        <button class="menu-btn" style="width:135px" onclick="setLang('pl')">PL 🇵🇱</button>
+        <button class="menu-btn" style="width:135px" onclick="setLang('de')">DE 🇩🇪</button>
+        <button class="menu-btn" style="width:135px" onclick="setLang('it')">IT 🇮🇹</button>
+        <button class="menu-btn" style="width:135px" onclick="setLang('es')">ES 🇪🇸</button>
+        <button class="menu-btn" style="width:135px" onclick="setLang('no')">NO 🇳🇴</button>
+        <button class="menu-btn" style="width:135px" onclick="setLang('kz')">KZ 🇰🇿</button>
+        <button class="menu-btn" style="width:135px" onclick="setLang('jp')">JP 🇯🇵</button>
     </div>
-    <button class="menu-btn btn-back" onclick="showScreen('screen-main')" style="margin-top:20px;">Назад</button>
+    <button class="menu-btn btn-back" onclick="showScreen('screen-main')" style="margin-top:10px;"></button>
 </div>
 
-<div id="transition-overlay">...</div>
+<div id="transition-overlay">
+    <h1 id="win1" style="color:var(--gold); font-size:40px; margin-bottom:10px;"></h1>
+    <h2 id="win2" style="color:white; font-size:30px;"></h2>
+</div>
 
 <script>
 const translations = {
-    ua: { start:"Старт", shop:"Магазин", friends:"Друзі", lang:"Мова", exit:"Вихід", back:"Назад", ammo:"Патрони", rank:"Звання", loading:"ГОТУЙСЯ...", charity:"95% коштів на ЗСУ...", copy:"Скопійовано!", b1:"Макс. патрони", b2:"Регенерація", b3:"Сила" },
-    en: { start:"Start", shop:"Shop", friends:"Friends", lang:"Language", exit:"Exit", back:"Back", ammo:"Ammo", rank:"Rank", loading:"GET READY...", charity:"95% for UA Army...", copy:"Copied!", b1:"Max Ammo", b2:"Regen", b3:"Power" }
-    // ... (інші мови аналогічно)
+    ua: { start:"Старт", shop:"Магазин", friends:"Друзі", lang:"Мова", exit:"Вихід", back:"Назад", ammo:"Патрони", rank:"Звання", win1:"СЛАВА УКРАЇНІ!", win2:"ГЕРОЯМ СЛАВА!", copy:"Скопійовано!", b1:"Сила", b2:"Реген", b3:"Запас", h1:"Покращення", h2:"Автоклікер", h3:"Звання", h4:"Монети" },
+    en: { start:"Start", shop:"Shop", friends:"Friends", lang:"Language", exit:"Exit", back:"Back", ammo:"Ammo", rank:"Rank", win1:"GLORY TO UKRAINE!", win2:"GLORY TO HEROES!", copy:"Copied!", b1:"Power", b2:"Regen", b3:"Limit", h1:"Boosts", h2:"Autoclicker", h3:"Ranks", h4:"Coins" },
+    pl: { start:"Start", shop:"Sklep", friends:"Znajomi", lang:"Język", exit:"Wyjście", back:"Wróć", ammo:"Amunicja", rank:"Ranga", win1:"SŁAWA UKRAINIE!", win2:"CHWAŁA BOHATEROM!", copy:"Skopiowano!", b1:"Siła", b2:"Regen", b3:"Zapas", h1:"Ulepszenia", h2:"Autoclicker", h3:"Rangi", h4:"Monety" },
+    de: { start:"Start", shop:"Geschäft", friends:"Freunde", lang:"Sprache", exit:"Beenden", back:"Zurück", ammo:"Munition", rank:"Rang", win1:"RUHM DER UKRAINE!", win2:"RUHM DEN HELDEN!", copy:"Kopiert!", b1:"Kraft", b2:"Regen", b3:"Limit", h1:"Boosts", h2:"Autoklicker", h3:"Ränge", h4:"Münzen" },
+    it: { start:"Inizio", shop:"Negozio", friends:"Amici", lang:"Lingua", exit:"Esci", back:"Indietro", ammo:"Munizioni", rank:"Grado", win1:"GLORIA ALL'UCRAINA!", win2:"GLORIA AI EROI!", copy:"Copiato!", b1:"Potenza", b2:"Regen", b3:"Limite", h1:"Potenziamenti", h2:"Autoclick", h3:"Gradi", h4:"Monete" },
+    es: { start:"Inicio", shop:"Tienda", friends:"Amigos", lang:"Idioma", exit:"Salir", back:"Volver", ammo:"Munición", rank:"Rango", win1:"¡GLORIA A UCRANIA!", win2:"¡GLORIA A LOS HÉROES!", copy:"¡Copiado!", b1:"Poder", b2:"Regen", b3:"Límite", h1:"Mejoras", h2:"Autoclicker", h3:"Rangos", h4:"Monedas" },
+    no: { start:"Start", shop:"Butikk", friends:"Venner", lang:"Språk", exit:"Avslutt", back:"Tilbake", ammo:"Ammunisjon", rank:"Rang", win1:"ÆRE TIL UKRAINA!", win2:"ÆRE TIL HELTENE!", copy:"Kopiert!", b1:"Styrke", b2:"Regen", b3:"Grense", h1:"Boosts", h2:"Autoklikker", h3:"Ranger", h4:"Mynter" },
+    kz: { start:"Бастау", shop:"Дүкен", friends:"Достар", lang:"Тіл", exit:"Шығу", back:"Артқа", ammo:"Оқтар", rank:"Шен", win1:"УКРАИНАҒА ДАҢҚ!", win2:"БАТЫРЛАРҒА ДАҢҚ!", copy:"Көшірілді!", b1:"Күш", b2:"Реген", b3:"Қоры", h1:"Жақсартулар", h2:"Автокликер", h3:"Шендер", h4:"Монеталар" },
+    jp: { start:"スタート", shop:"ショップ", friends:"友達", lang:"言語", exit:"終了", back:"戻る", ammo:"弾薬", rank:"ランク", win1:"ウクライナに栄光あれ！", win2:"英雄に栄光あれ！", copy:"コピーしました！", b1:"パワー", b2:"リジェネ", b3:"上限", h1:"ブースト", h2:"オートクリッカー", h3:"ランク", h4:"コイン" }
 };
 
+const soundShot = new Audio('shot.mp3');
+const soundWin = new Audio('win.mp3');
 const boostPrices = [10, 20, 30, 70, 150, 300, 350, 400, 450, 500, 500, 500, 500, 500, 500];
-const rankList = ["Новачок", "Молодший лейтенант", "Лейтенант", "Старший лейтенант", "Капітан", "Майор", "Підполковник", "Полковник", "Бригадний генерал", "Генерал-майор", "Генерал-лейтенант", "Генерал"];
-const rankPrices = [0, 10, 20, 30, 40, 80, 100, 120, 310, 340, 370, 500];
-const autoPrices = [0, 85, 185, 285, 385, 485, 1500];
+const rankList = ["Новачок", "Мл. лейтенант", "Лейтенант", "Капітан", "Майор", "Полковник", "Генерал"];
+const rankPricesGrn = [0, 15, 50, 150, 300, 500, 1500];
+const autoPrices = [0, 15, 50, 150, 300, 500];
+const bossHPList = [200, 1000, 5000, 20000, 100000, 500000, 2000000];
 
 let state = {
     coins: 0, ammo: 100, maxAmmo: 100, regen: 5, clickPower: 1, bossLv: 1, hp: 200, maxHp: 200, 
-    isHalfReward: false, boosts: {ammo:0, regen:0, power:0}, autoLv: 0, 
-    rankIdx: 0, lang: 'ua', userId: Math.floor(Math.random()*100000)
+    isHalfReward: false, boosts: {ammo:0, regen:0, power:0}, autoLv: 0, rankIdx: 0, lang: 'ua', userId: 28190
 };
 
-function saveGame() { localStorage.setItem('saga_v3_fixed', JSON.stringify(state)); }
+let isTransitioning = false; // ЗАХИСТ ВІД ПЕРЕСКАКУВАННЯ
+
+function saveGame() { localStorage.setItem('saga_v12_final', JSON.stringify(state)); }
 function loadGame() {
-    const s = localStorage.getItem('saga_v3_fixed');
+    const s = localStorage.getItem('saga_v12_final');
     if(s) state = JSON.parse(s);
     applyLanguage(); updateUI();
 }
@@ -114,147 +123,123 @@ function showScreen(id) {
 }
 
 function handleHit() {
-    if(state.ammo <= 0) return;
+    if(state.ammo <= 0 || isTransitioning) return;
+    soundShot.currentTime = 0; soundShot.play().catch(()=>{});
     state.ammo--;
     state.hp -= state.clickPower;
-    
-    // Візуальний ефект кліку
-    const img = document.getElementById('boss-img');
-    img.style.transform = `scale(0.95) rotate(${(Math.random()-0.5)*10}deg)`;
-    setTimeout(() => img.style.transform = 'scale(1) rotate(0deg)', 50);
+    checkBossStatus();
+    updateUI();
+}
 
+function checkBossStatus() {
     if(state.hp <= state.maxHp/2 && !state.isHalfReward) {
         state.isHalfReward = true;
         state.coins += 10 * Math.pow(2, state.bossLv-1);
     }
-    if(state.hp <= 0) nextBoss();
-    updateUI();
+    if(state.hp <= 0 && !isTransitioning) {
+        nextBoss();
+    }
 }
 
 function nextBoss() {
-    state.bossLv++; 
-    if(state.bossLv > 7) state.bossLv = 1;
+    isTransitioning = true; // Блокуємо будь-які кліки під час зміни
     
-    document.getElementById('transition-overlay').innerText = translations[state.lang]?.loading || "LOADING...";
+    let nextLevel = state.bossLv + 1;
+    if (nextLevel > 7) nextLevel = 1;
+    state.bossLv = nextLevel;
+
+    soundWin.play().catch(()=>{});
     document.getElementById('transition-overlay').style.display = 'flex';
     
     setTimeout(() => {
-        state.maxHp = 200 * Math.pow(10, state.bossLv-1);
+        state.maxHp = bossHPList[state.bossLv - 1];
         state.hp = state.maxHp; 
         state.isHalfReward = false;
         document.getElementById('transition-overlay').style.display = 'none';
+        isTransitioning = false; // Знову дозволяємо кліки
         updateUI();
-    }, 3000);
+    }, 4000);
 }
-
-function renderShop() {
-    const t = translations[state.lang] || translations['ua'];
-    document.getElementById('charity-msg').innerText = t.charity;
-    
-    // Бусти
-    let bHtml = '';
-    const bTypes = [{id:'power', n:t.b3}, {id:'regen', n:t.b2}, {id:'ammo', n:t.b1}];
-    bTypes.forEach(x => {
-        let lv = state.boosts[x.id];
-        let p = lv >= 15 ? "MAX" : boostPrices[lv] + " 💰";
-        bHtml += `<div class="shop-item"><span>${x.n} (Lv: ${lv})</span><button class="buy-btn" onclick="buyBoost('${x.id}')" ${lv >= 15 ? 'disabled' : ''}>${p}</button></div>`;
-    });
-    document.getElementById('list-boosts').innerHTML = bHtml;
-
-    // Автоклікер
-    let aHtml = '';
-    if(state.autoLv < 6) {
-        let nxt = state.autoLv + 1;
-        aHtml = `<div class="shop-item"><span>Автоклікер Lvl ${nxt}</span><button class="buy-btn" onclick="buyAuto(${nxt})">${autoPrices[nxt]}грн</button></div>`;
-    } else { aHtml = '<div class="shop-item"><span>VIP-Автоклікер</span><button class="buy-btn" disabled>MAX</button></div>'; }
-    document.getElementById('list-auto').innerHTML = aHtml;
-
-    // Монети
-    const packs = [{c:50, p:15}, {c:150, p:50}, {c:450, p:150}, {c:900, p:280}, {c:2100, p:650}, {c:6000, p:1800}];
-    let pHtml = '';
-    packs.forEach(p => pHtml += `<div class="shop-item"><span>${p.c} монет</span><button class="buy-btn" onclick="buyCoins(${p.c})">${p.p}грн</button></div>`);
-    document.getElementById('list-buy').innerHTML = pHtml;
-
-    // Звання
-    let rHtml = '';
-    if(state.rankIdx < rankList.length - 1) {
-        let nxt = state.rankIdx + 1;
-        rHtml = `<div class="shop-item"><span>${rankList[nxt]}</span><button class="buy-btn" onclick="buyRank(${nxt})">${rankPrices[nxt]}грн</button></div>`;
-    } else { rHtml = '<div class="shop-item"><span>Максимальне звання</span></div>'; }
-    document.getElementById('list-ranks').innerHTML = rHtml;
-}
-
-function buyBoost(id) {
-    let lv = state.boosts[id]; if(lv >= 15) return;
-    if(state.coins >= boostPrices[lv]) {
-        state.coins -= boostPrices[lv]; state.boosts[id]++;
-        if(id==='power') state.clickPower++;
-        if(id==='regen') state.regen += 2;
-        if(id==='ammo') { state.maxAmmo += 50; state.ammo = state.maxAmmo; }
-        renderShop(); updateUI();
-    }
-}
-function buyAuto(lv) { state.autoLv = lv; renderShop(); saveGame(); }
-function buyCoins(amt) { state.coins += amt; updateUI(); }
-function buyRank(idx) { state.rankIdx = idx; updateUI(); renderShop(); }
 
 function updateUI() {
-    const t = translations[state.lang] || translations['ua'];
-    
-    // HP та Прогрес
-    const hpPercent = Math.max(0, (state.hp / state.maxHp) * 100);
-    document.getElementById('hp-fill').style.width = hpPercent + '%';
+    const t = translations[state.lang];
+    document.getElementById('hp-fill').style.width = (state.hp/state.maxHp*100) + '%';
     document.getElementById('hp-text').innerText = `${Math.floor(state.hp).toLocaleString()} / ${state.maxHp.toLocaleString()} HP`;
-    
-    // Статистика
     document.getElementById('coins').innerText = Math.floor(state.coins);
     document.getElementById('ammo').innerText = state.ammo;
     document.getElementById('max-ammo').innerText = state.maxAmmo;
     document.getElementById('rank-display').innerText = `${t.rank}: ${rankList[state.rankIdx]}`;
-    
-    // Зображення персонажа (Логіка "пораненого")
+    document.getElementById('ref-link').innerText = `t.me/SagaidachnyBot?start=${state.userId}`;
     const img = document.getElementById('boss-img');
-    const isDamaged = state.hp <= state.maxHp / 2;
-    const baseName = state.bossLv;
-    img.src = isDamaged ? `${baseName}_d.png` : `${baseName}.png`;
-
+    img.src = state.bossLv + (state.hp <= state.maxHp/2 ? "_d.png" : ".png");
     saveGame();
 }
 
 function applyLanguage() {
-    const t = translations[state.lang] || translations['ua'];
-    document.getElementById('m-start').innerText = t.start;
-    document.getElementById('m-shop').innerText = t.shop;
-    document.getElementById('m-friends').innerText = t.friends;
-    document.getElementById('m-lang').innerText = t.lang;
-    document.getElementById('m-exit').innerText = t.exit;
+    const t = translations[state.lang];
+    const ids = ['m-start','m-shop','m-friends','m-lang','m-exit','txt-ammo','s-title','f-title','l-title','win1','win2','h-boosts','h-auto','h-ranks','h-buy'];
+    const keys = ['start','shop','friends','lang','exit','ammo','shop','friends','lang','win1','win2','h1','h2','h3','h4'];
+    ids.forEach((id, i) => { if(document.getElementById(id)) document.getElementById(id).innerText = t[keys[i]]; });
     document.querySelectorAll('.btn-back').forEach(b => b.innerText = t.back);
-    document.getElementById('ref-link').innerText = `https://t.me/SagaidachnyBot?start=${state.userId}`;
 }
 
-function setLang(c) { state.lang = c; applyLanguage(); updateUI(); }
-function copyRef() { 
-    navigator.clipboard.writeText(document.getElementById('ref-link').innerText);
-    alert(translations[state.lang]?.copy || "Copied!"); 
+function renderShop() {
+    const t = translations[state.lang];
+    let bHtml = '';
+    const bTypes = [{id:'power', n:t.b1}, {id:'regen', n:t.b2}, {id:'ammo', n:t.b3}];
+    bTypes.forEach(x => {
+        let lv = state.boosts[x.id];
+        let p = lv >= 15 ? "MAX" : boostPrices[lv] + " 💰";
+        bHtml += `<div class="shop-item"><span>${x.n} (Lv: ${lv})</span><button class="buy-btn" onclick="buyBoost('${x.id}')">${p}</button></div>`;
+    });
+    document.getElementById('list-boosts').innerHTML = bHtml;
+
+    let aHtml = '';
+    if(state.autoLv < 5) {
+        let nxt = state.autoLv + 1;
+        aHtml = `<div class="shop-item"><span>Lvl ${nxt}</span><button class="buy-btn" onclick="buyAuto(${nxt})">${autoPrices[nxt]}грн</button></div>`;
+    } else aHtml = '<div class="shop-item"><span>MAX</span></div>';
+    document.getElementById('list-auto').innerHTML = aHtml;
+
+    let rHtml = '';
+    if(state.rankIdx < rankList.length - 1) {
+        let nxt = state.rankIdx + 1;
+        rHtml = `<div class="shop-item"><span>${rankList[nxt]}</span><button class="buy-btn" onclick="buyRank(${nxt})">${rankPricesGrn[nxt]}грн</button></div>`;
+    } else rHtml = '<div class="shop-item"><span>MAX</span></div>';
+    document.getElementById('list-ranks').innerHTML = rHtml;
+
+    const packs = [
+        {c:50, p:15}, {c:150, p:50}, {c:450, p:150}, 
+        {c:900, p:280}, {c:2100, p:650}, {c:6000, p:1800}
+    ];
+    let pHtml = '';
+    packs.forEach(p => pHtml += `<div class="shop-item"><span>${p.c} 💰</span><button class="buy-btn" onclick="buyCoins(${p.c})">${p.p}грн</button></div>`);
+    document.getElementById('list-buy').innerHTML = pHtml;
 }
-function closeGame() { if(window.Telegram?.WebApp) window.Telegram.WebApp.close(); else alert("Вихід..."); }
 
-// Таймери
-setInterval(() => { 
-    if(state.ammo < state.maxAmmo) { 
-        state.ammo = Math.min(state.maxAmmo, state.ammo + state.regen); 
-        updateUI(); 
-    } 
-}, 5000);
+function buyBoost(id) {
+    let lv = state.boosts[id]; if(lv >= 15 || state.coins < boostPrices[lv]) return;
+    state.coins -= boostPrices[lv]; state.boosts[id]++;
+    if(id==='ammo') { state.maxAmmo += 50; state.ammo = state.maxAmmo; }
+    if(id==='power') state.clickPower++;
+    if(id==='regen') state.regen += 2;
+    renderShop(); updateUI();
+}
+function buyAuto(lv) { state.autoLv = lv; renderShop(); saveGame(); }
+function buyCoins(amt) { state.coins += amt; updateUI(); }
+function buyRank(idx) { state.rankIdx = idx; updateUI(); renderShop(); }
+function setLang(l) { state.lang = l; applyLanguage(); updateUI(); if(document.getElementById('screen-shop').classList.contains('active')) renderShop(); }
+function copyRef() { navigator.clipboard.writeText(document.getElementById('ref-link').innerText); alert(translations[state.lang].copy); }
+function closeGame() { if(window.Telegram?.WebApp) window.Telegram.WebApp.close(); }
 
+setInterval(() => { if(state.ammo < state.maxAmmo) { state.ammo = Math.min(state.maxAmmo, state.ammo + state.regen); updateUI(); } }, 5000);
 setInterval(() => { 
-    if(state.autoLv > 0) { 
-        state.hp -= [0, 1, 5, 10, 15, 20, 50][state.autoLv]; 
-        if(state.hp <= 0) nextBoss(); 
+    if(state.autoLv > 0 && !isTransitioning) { 
+        state.hp -= state.autoLv * 5; 
+        checkBossStatus(); // Використовуємо ту саму перевірку, що і при кліках
         updateUI(); 
     } 
 }, 1000);
-
 window.onload = loadGame;
 </script>
 </body>
